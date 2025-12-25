@@ -1,0 +1,72 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version_type:
+        description: 'Version bump type'
+        required: true
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  create-version-pr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run lint
+        run: npm run lint
+
+      - name: Run build
+        run: npm run build
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Bump version
+        run: npm version ${{ github.event.inputs.version_type }} --no-git-tag-version
+
+      - name: Get new version
+        id: version
+        run: echo "VERSION=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          commit-message: "chore: bump version to ${{ steps.version.outputs.VERSION }}"
+          branch: release/v${{ steps.version.outputs.VERSION }}
+          delete-branch: true
+          title: "Release v${{ steps.version.outputs.VERSION }}"
+          body: |
+            ## Release v${{ steps.version.outputs.VERSION }}
+
+            This PR bumps the version to ${{ steps.version.outputs.VERSION }}.
+
+            ### Changes
+            - Updated `package.json`
+            - Updated `manifest.json`
+            - Updated `versions.json`
+
+            **Type:** ${{ github.event.inputs.version_type }}
+
+            Once merged, a release will be automatically created.
