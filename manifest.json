@@ -1,0 +1,10 @@
+{
+	"id": "obsidian-notify",
+	"name": "Notify",
+	"version": "0.1.0",
+	"minAppVersion": "0.15.0",
+	"description": "Event notification system using emoji-based task syntax for reminders and recurring events.",
+	"author": "Chris Maki",
+	"authorUrl": "",
+	"isDesktopOnly": false
+}
