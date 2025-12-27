@@ -9,6 +9,7 @@ import { EventManager } from "./events";
 import { BlockIdManager } from "./blockid-manager";
 import { NotifyBlockRenderer } from "./renderer";
 import { NotificationDebugModal } from "./debug-modal";
+import { Logger } from "./logger";
 
 export default class NotificationPlugin extends Plugin {
 	settings: NotificationSettings;
@@ -16,9 +17,13 @@ export default class NotificationPlugin extends Plugin {
 	eventManager: EventManager;
 	blockIdManager: BlockIdManager;
 	activeRenderers: Set<NotifyBlockRenderer>;
+	logger: Logger;
 
 	async onload() {
 		await this.loadSettings();
+
+		// Initialize logger with current setting
+		this.logger = new Logger(this.settings.debugLogging);
 
 		// Initialize renderer tracking
 		this.activeRenderers = new Set();
@@ -51,26 +56,31 @@ export default class NotificationPlugin extends Plugin {
 		// Add settings tab
 		this.addSettingTab(new NotificationSettingTab(this.app, this));
 
-		console.debug("Notify plugin loaded");
+		this.logger.debug("Notify plugin loaded");
 	}
 
 	private async initializePlugin() {
 		// Create BlockIdManager
-		this.blockIdManager = new BlockIdManager(this.app);
+		this.blockIdManager = new BlockIdManager(this.app, this.logger);
 
 		// Initialize cache with BlockIdManager and plugin reference
-		this.cache = new NotificationCache(this.app, this.blockIdManager, this);
+		this.cache = new NotificationCache(
+			this.app,
+			this.blockIdManager,
+			this,
+			this.logger,
+		);
 		await this.cache.initialize();
 
 		// Start event listeners
-		this.eventManager = new EventManager(this.app, this.cache);
+		this.eventManager = new EventManager(this.app, this.cache, this.logger);
 		this.eventManager.register();
 	}
 
 	onunload() {
 		// Cleanup event listeners
 		this.eventManager.unregister();
-		console.debug("Notification plugin unloaded");
+		this.logger.debug("Notification plugin unloaded");
 	}
 
 	async loadSettings() {

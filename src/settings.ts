@@ -5,11 +5,13 @@ import { NotificationAcknowledgements } from "./types";
 export interface NotificationSettings {
 	lookbackDays: number;
 	acknowledgements: NotificationAcknowledgements;
+	debugLogging: boolean;
 }
 
 export const DEFAULT_SETTINGS: NotificationSettings = {
 	lookbackDays: 3,
 	acknowledgements: {},
+	debugLogging: false,
 };
 
 export class NotificationSettingTab extends PluginSettingTab {
@@ -25,7 +27,9 @@ export class NotificationSettingTab extends PluginSettingTab {
 
 		containerEl.empty();
 
-		new Setting(containerEl).setName("Notifications").setHeading();
+		new Setting(containerEl)
+			.setName("Notifications")
+			.setDesc("Configure notification behavior");
 
 		new Setting(containerEl)
 			.setName("Lookback window (days)")
@@ -42,6 +46,19 @@ export class NotificationSettingTab extends PluginSettingTab {
 							this.plugin.settings.lookbackDays = num;
 							await this.plugin.saveSettings();
 						}
+					}),
+			);
+
+		new Setting(containerEl)
+			.setName("Debug logging")
+			.setDesc("Enable debug logging to console (for troubleshooting)")
+			.addToggle((toggle) =>
+				toggle
+					.setValue(this.plugin.settings.debugLogging)
+					.onChange(async (value) => {
+						this.plugin.settings.debugLogging = value;
+						this.plugin.logger.setDebugEnabled(value);
+						await this.plugin.saveSettings();
 					}),
 			);
 	}
