@@ -5,6 +5,6 @@
 	"minAppVersion": "0.15.0",
 	"description": "Event notification system using emoji-based task syntax for reminders and recurring events.",
 	"author": "Chris Maki",
-	"authorUrl": "",
+	"authorUrl": "https://github.com/maceternal",
 	"isDesktopOnly": false
 }
