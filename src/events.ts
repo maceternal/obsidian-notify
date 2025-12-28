@@ -1,24 +1,27 @@
 import { App, TFile, TAbstractFile, EventRef } from "obsidian";
 import { NotificationCache } from "./cache";
+import { Logger } from "./logger";
 
 export class EventManager {
 	private app: App;
 	private cache: NotificationCache;
 	private debounceTimers: Map<string, number>;
 	private eventRefs: EventRef[];
+	private logger: Logger;
 
-	constructor(app: App, cache: NotificationCache) {
+	constructor(app: App, cache: NotificationCache, logger: Logger) {
 		this.app = app;
 		this.cache = cache;
 		this.debounceTimers = new Map();
 		this.eventRefs = [];
+		this.logger = logger;
 	}
 
 	/**
 	 * Register event listeners for vault and metadata changes
 	 */
 	register(): void {
-		console.debug("Registering event listeners...");
+		this.logger.debug("Registering event listeners...");
 
 		// Listen for metadata changes (fires after file is parsed)
 		const metadataRef = this.app.metadataCache.on("changed", (file) => {
@@ -38,14 +41,14 @@ export class EventManager {
 		});
 		this.eventRefs.push(renameRef);
 
-		console.debug("Event listeners registered");
+		this.logger.debug("Event listeners registered");
 	}
 
 	/**
 	 * Unregister all event listeners (cleanup on plugin unload)
 	 */
 	unregister(): void {
-		console.debug("Unregistering event listeners...");
+		this.logger.debug("Unregistering event listeners...");
 
 		// Clear all debounce timers
 		for (const timer of this.debounceTimers.values()) {
@@ -57,7 +60,7 @@ export class EventManager {
 		this.eventRefs.forEach((ref) => this.app.metadataCache.offref(ref));
 		this.eventRefs = [];
 
-		console.debug("Event listeners unregistered");
+		this.logger.debug("Event listeners unregistered");
 	}
 
 	/**
@@ -72,7 +75,7 @@ export class EventManager {
 
 		// Set new timer - update cache after 500ms of no changes
 		const timer = window.setTimeout(() => {
-			console.debug(`File changed: ${file.path}`);
+			this.logger.debug(`File changed: ${file.path}`);
 			void this.cache.updateFile(file);
 			this.debounceTimers.delete(file.path);
 		}, 500);
@@ -85,7 +88,7 @@ export class EventManager {
 	 */
 	private handleFileDeleted(file: TAbstractFile): void {
 		if (file instanceof TFile) {
-			console.debug(`File deleted: ${file.path}`);
+			this.logger.debug(`File deleted: ${file.path}`);
 			this.cache.removeFile(file.path);
 
 			// Clear any pending debounce timer
@@ -102,7 +105,7 @@ export class EventManager {
 	 */
 	private handleFileRenamed(file: TAbstractFile, oldPath: string): void {
 		if (file instanceof TFile) {
-			console.debug(`File renamed: ${oldPath} -> ${file.path}`);
+			this.logger.debug(`File renamed: ${oldPath} -> ${file.path}`);
 
 			// Remove old path from cache
 			this.cache.removeFile(oldPath);

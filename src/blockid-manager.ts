@@ -1,13 +1,16 @@
 import { App, TFile } from "obsidian";
 import { NotificationTask } from "./types";
+import { Logger } from "./logger";
 
 export class BlockIdManager {
 	private app: App;
 	private queue: NotificationTask[];
+	private logger: Logger;
 
-	constructor(app: App) {
+	constructor(app: App, logger: Logger) {
 		this.app = app;
 		this.queue = [];
+		this.logger = logger;
 	}
 
 	/**
@@ -34,7 +37,7 @@ export class BlockIdManager {
 			return;
 		}
 
-		console.debug(
+		this.logger.debug(
 			`Processing ${this.queue.length} tasks for block ID addition`,
 		);
 
@@ -50,7 +53,7 @@ export class BlockIdManager {
 		const processed = this.queue.length;
 		this.queue = [];
 
-		console.debug(`Added block IDs to ${processed} tasks`);
+		this.logger.debug(`Added block IDs to ${processed} tasks`);
 	}
 
 	/**
@@ -115,7 +118,7 @@ export class BlockIdManager {
 					// Update the task object with the new block ID
 					task.blockId = blockId;
 
-					console.debug(
+					this.logger.debug(
 						`Added block ID ^${blockId} to task in ${filePath}:${task.lineNumber}`,
 					);
 				}
@@ -123,7 +126,7 @@ export class BlockIdManager {
 				return lines.join("\n");
 			});
 		} catch (error) {
-			console.error(`Error adding block IDs to ${filePath}:`, error);
+			this.logger.error(`Error adding block IDs to ${filePath}:`, error);
 		}
 	}
 

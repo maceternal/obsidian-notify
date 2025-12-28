@@ -3,36 +3,40 @@ import { NotificationTask } from "./types";
 import { TaskParser } from "./parser";
 import { BlockIdManager } from "./blockid-manager";
 import type NotificationPlugin from "./main";
+import { Logger } from "./logger";
 
 export class NotificationCache {
 	private app: App;
 	private cache: Map<string, NotificationTask[]>; // filePath -> tasks
 	private blockIdManager: BlockIdManager;
 	private plugin: NotificationPlugin;
+	private logger: Logger;
 
 	constructor(
 		app: App,
 		blockIdManager: BlockIdManager,
 		plugin: NotificationPlugin,
+		logger: Logger,
 	) {
 		this.app = app;
 		this.cache = new Map();
 		this.blockIdManager = blockIdManager;
 		this.plugin = plugin;
+		this.logger = logger;
 	}
 
 	/**
 	 * Initialize cache by scanning all markdown files
 	 */
 	async initialize(): Promise<void> {
-		console.debug("Initializing notification cache...");
+		this.logger.debug("Initializing notification cache...");
 		const files = this.app.vault.getMarkdownFiles();
 
 		for (const file of files) {
 			await this.updateFile(file);
 		}
 
-		console.debug(
+		this.logger.debug(
 			`Notification cache initialized with ${this.cache.size} files`,
 		);
 
