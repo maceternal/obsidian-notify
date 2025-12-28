@@ -11,7 +11,7 @@ export class Logger {
 
 	debug(...args: unknown[]): void {
 		if (this.debugEnabled) {
-			console.log("[Notify]", ...args);
+			console.debug("[Notify]", ...args);
 		}
 	}
 

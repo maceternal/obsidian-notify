@@ -126,7 +126,7 @@ export class BlockIdManager {
 				return lines.join("\n");
 			});
 		} catch (error) {
-			console.error(`Error adding block IDs to ${filePath}:`, error);
+			this.logger.error(`Error adding block IDs to ${filePath}:`, error);
 		}
 	}
 

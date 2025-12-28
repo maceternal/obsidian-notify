@@ -159,7 +159,7 @@ export class NotifyBlockRenderer extends MarkdownRenderChild {
 		}
 
 		// Listen for checkbox changes
-		checkbox.addEventListener("change", () => {
+		this.registerDomEvent(checkbox, "change", () => {
 			void (async () => {
 				if (checkbox.checked) {
 					await this.plugin.acknowledgeNotification(key);
