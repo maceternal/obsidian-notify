@@ -24,7 +24,13 @@ export class NotificationMatcher {
 
 			// Check 1: Does the event date match (with repeat and lookback logic)?
 			if (this.eventDateMatches(eventDate, today, task.repeatInterval)) {
-				const daysDiff = today.diff(eventDate, "days");
+				// For yearly events, calculate diff from this year's occurrence
+				let effectiveEventDate = eventDate;
+				if (task.repeatInterval === "year") {
+					effectiveEventDate = eventDate.clone().year(today.year());
+				}
+
+				const daysDiff = today.diff(effectiveEventDate, "days");
 				const context = this.getEventDateContext(
 					daysDiff,
 					task.repeatInterval,
@@ -81,16 +87,8 @@ export class NotificationMatcher {
 				const thisYearEvent = eventDate.clone().year(today.year());
 				const yearDiff = today.diff(thisYearEvent, "days");
 
-				// Within lookback window for this year's occurrence
-				if (yearDiff >= 0 && yearDiff <= this.settings.lookbackDays) {
-					return true;
-				}
-
-				// Or exactly matches today (anniversary)
-				return (
-					thisYearEvent.month() === today.month() &&
-					thisYearEvent.date() === today.date()
-				);
+				// Within lookback window for this year's occurrence (includes exact match when yearDiff === 0)
+				return yearDiff >= 0 && yearDiff <= this.settings.lookbackDays;
 			}
 
 			case "month": {
