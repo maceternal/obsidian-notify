@@ -1,164 +1,164 @@
 /* Notification block styling */
 
 .notification-block {
-	padding: 10px 10px 10px 30px;
-	border-left: 3px solid var(--interactive-accent);
-	background-color: var(--background-secondary);
-	border-radius: 4px;
-	margin: 10px 0;
+  padding: 10px 10px 10px 30px;
+  border-left: 3px solid var(--interactive-accent);
+  background-color: var(--background-secondary);
+  border-radius: 4px;
+  margin: 10px 0;
 }
 
 .notification-block ul {
-	margin: 0;
-	padding-left: 0;
+  margin: 0;
+  padding-left: 0;
 }
 
 .notification-block .task-list-item {
-	margin: 4px 0;
-	list-style: none;
-	display: flex;
-	align-items: flex-start;
+  margin: 4px 0;
+  list-style: none;
+  display: flex;
+  align-items: flex-start;
 }
 
 .notification-block .task-list-item-checkbox {
-	margin-left: -30px;
-	margin-right: 8px;
-	margin-top: 2px;
-	flex-shrink: 0;
+  margin-left: -30px;
+  margin-right: 8px;
+  margin-top: 2px;
+  flex-shrink: 0;
 }
 
 .notification-block .task-list-item > span {
-	flex: 1;
+  flex: 1;
 }
 
 .notification-block .task-list-item > span > p {
-	margin: 0;
-	display: inline;
+  margin: 0;
+  display: inline;
 }
 
 /* Style for past events (with strikethrough dates) */
 .notification-block del {
-	color: var(--text-muted);
-	opacity: 0.7;
+  color: var(--text-muted);
+  opacity: 0.7;
 }
 
 /* Empty state message */
 .notification-block em {
-	color: var(--text-muted);
-	font-style: italic;
+  color: var(--text-muted);
+  font-style: italic;
 }
 
 /* Acknowledged/checked notifications - greyed out */
 .notification-block .acknowledged {
-	opacity: 0.5;
+  opacity: 0.5;
 }
 
 .notification-block .acknowledged .task-list-item-checkbox {
-	/* Checkbox remains visible but inherits the opacity */
+  /* Checkbox remains visible but inherits the opacity */
 }
 
 /* Debug Modal Styling */
 
 .notification-debug-modal h2 {
-	margin-top: 0;
-	margin-bottom: 16px;
-	color: var(--text-normal);
-	font-size: 1.5em;
+  margin-top: 0;
+  margin-bottom: 16px;
+  color: var(--text-normal);
+  font-size: 1.5em;
 }
 
 .notification-debug-modal .task-summary {
-	background-color: var(--background-secondary);
-	border-radius: 6px;
-	padding: 12px 16px;
-	margin-bottom: 20px;
-	text-align: center;
+  background-color: var(--background-secondary);
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin-bottom: 20px;
+  text-align: center;
 }
 
 .notification-debug-modal .task-summary p {
-	margin: 0;
-	color: var(--text-muted);
-	font-size: 0.95em;
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.95em;
 }
 
 .notification-debug-modal .task-empty {
-	text-align: center;
-	color: var(--text-muted);
-	font-style: italic;
-	padding: 40px 20px;
+  text-align: center;
+  color: var(--text-muted);
+  font-style: italic;
+  padding: 40px 20px;
 }
 
 .notification-debug-modal .file-group {
-	margin-bottom: 24px;
-	border: 1px solid var(--background-modifier-border);
-	border-radius: 8px;
-	overflow: hidden;
+  margin-bottom: 24px;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 8px;
+  overflow: hidden;
 }
 
 .notification-debug-modal .file-header {
-	background-color: var(--background-secondary);
-	color: var(--text-normal);
-	padding: 12px 16px;
-	margin: 0;
-	font-size: 1.1em;
-	font-weight: 600;
-	border-bottom: 2px solid var(--interactive-accent);
-	cursor: pointer;
-	transition: background-color 0.2s ease;
+  background-color: var(--background-secondary);
+  color: var(--text-normal);
+  padding: 12px 16px;
+  margin: 0;
+  font-size: 1.1em;
+  font-weight: 600;
+  border-bottom: 2px solid var(--interactive-accent);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
 }
 
 .notification-debug-modal .file-header:hover {
-	background-color: var(--background-modifier-hover);
+  background-color: var(--background-modifier-hover);
 }
 
 .notification-debug-modal .task-list {
-	padding: 8px;
+  padding: 8px;
 }
 
 .notification-debug-modal .task-item {
-	background-color: var(--background-primary);
-	border: 1px solid var(--background-modifier-border);
-	border-radius: 6px;
-	padding: 12px 14px;
-	margin-bottom: 8px;
-	transition: all 0.2s ease;
-	cursor: pointer;
+  background-color: var(--background-primary);
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 6px;
+  padding: 12px 14px;
+  margin-bottom: 8px;
+  transition: all 0.2s ease;
+  cursor: pointer;
 }
 
 .notification-debug-modal .task-item:hover {
-	background-color: var(--background-secondary);
-	border-color: var(--interactive-accent);
-	transform: translateX(2px);
+  background-color: var(--background-secondary);
+  border-color: var(--interactive-accent);
+  transform: translateX(2px);
 }
 
 .notification-debug-modal .task-item:last-child {
-	margin-bottom: 0;
+  margin-bottom: 0;
 }
 
 .notification-debug-modal .task-title {
-	font-size: 1.05em;
-	font-weight: 600;
-	color: var(--text-normal);
-	margin-bottom: 8px;
+  font-size: 1.05em;
+  font-weight: 600;
+  color: var(--text-normal);
+  margin-bottom: 8px;
 }
 
 .notification-debug-modal .task-details {
-	display: flex;
-	flex-direction: column;
-	gap: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .notification-debug-modal .task-details > div {
-	font-size: 0.9em;
-	color: var(--text-muted);
-	line-height: 1.4;
+  font-size: 0.9em;
+  color: var(--text-muted);
+  line-height: 1.4;
 }
 
 .notification-debug-modal .task-date {
-	color: var(--text-accent);
+  color: var(--text-accent);
 }
 
 .notification-debug-modal .task-location {
-	font-size: 0.85em;
-	color: var(--text-faint);
-	font-family: var(--font-monospace);
+  font-size: 0.85em;
+  color: var(--text-faint);
+  font-family: var(--font-monospace);
 }
