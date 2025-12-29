@@ -1,6 +1,6 @@
 {
   "name": "notify",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "Event notification system using emoji-based task syntax for reminders and recurring events",
   "main": "main.js",
   "type": "module",
