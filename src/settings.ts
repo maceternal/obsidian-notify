@@ -6,12 +6,14 @@ export interface NotificationSettings {
 	lookbackDays: number;
 	acknowledgements: NotificationAcknowledgements;
 	debugLogging: boolean;
+	useFileDate: boolean;
 }
 
 export const DEFAULT_SETTINGS: NotificationSettings = {
 	lookbackDays: 3,
 	acknowledgements: {},
 	debugLogging: false,
+	useFileDate: true,
 };
 
 export class NotificationSettingTab extends PluginSettingTab {
@@ -46,6 +48,22 @@ export class NotificationSettingTab extends PluginSettingTab {
 							this.plugin.settings.lookbackDays = num;
 							await this.plugin.saveSettings();
 						}
+					}),
+			);
+
+		new Setting(containerEl)
+			.setName("Use file date for notifications")
+			.setDesc(
+				"Extract date from filename (e.g., 2026-01-07.md) to determine which notifications to show. Falls back to today's date if no date found.",
+			)
+			.addToggle((toggle) =>
+				toggle
+					.setValue(this.plugin.settings.useFileDate)
+					.onChange(async (value) => {
+						this.plugin.settings.useFileDate = value;
+						await this.plugin.saveSettings();
+						// Refresh all renderers to apply new setting
+						this.plugin.refreshAllNotifications();
 					}),
 			);
 

@@ -35,7 +35,13 @@ export default class NotificationPlugin extends Plugin {
 
 		// Register notify code block processor
 		this.registerMarkdownCodeBlockProcessor("notify", (source, el, ctx) => {
-			const renderer = new NotifyBlockRenderer(el, ctx, this);
+			const renderer = new NotifyBlockRenderer(
+				el,
+				ctx,
+				this,
+				this.settings,
+				this.logger,
+			);
 			ctx.addChild(renderer);
 		});
 
@@ -109,9 +115,9 @@ export default class NotificationPlugin extends Plugin {
 		}
 	}
 
-	async acknowledgeNotification(key: string): Promise<void> {
-		const today = moment().format("YYYY-MM-DD");
-		this.settings.acknowledgements[key] = today;
+	async acknowledgeNotification(key: string, date?: string): Promise<void> {
+		const ackDate = date || moment().format("YYYY-MM-DD");
+		this.settings.acknowledgements[key] = ackDate;
 		await this.saveSettings();
 	}
 
