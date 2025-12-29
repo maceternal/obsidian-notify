@@ -57,6 +57,7 @@ The plugin is organized into 11 focused modules, grouped by architectural concer
   - Emoji detection and extraction (dates, repeat intervals, reminder offsets)
   - Title extraction (everything before `📆`)
   - Block ID extraction and generation
+  - Date extraction from filenames (e.g., `2026-01-07.md` → `2026-01-07`)
   - Pure functions with no state - easy to test
 
 - **`cache.ts`** - Event-driven caching system (`NotificationCache` class):
@@ -77,11 +78,15 @@ The plugin is organized into 11 focused modules, grouped by architectural concer
   - Returns `ActiveNotification[]` with computed display text for each match
   - Pure logic with no state or side effects - easy to test independently
   - Context generation for display: "today", "2 days ago", "1 week early", etc.
+  - Proper pluralization: "1 week" vs "2 weeks early"
 
 #### UI Components
 
 - **`renderer.ts`** - Code block rendering (`NotifyBlockRenderer` class):
   - Renders ` ```notify``` ` code blocks in reading view
+  - Context-aware date detection: extracts date from filename when available
+  - Falls back to system date if no file date found
+  - Takes settings and logger as constructor parameters (explicit dependencies)
   - Extends `MarkdownRenderChild` for proper Obsidian lifecycle management
   - Smart refresh: hash-based change detection prevents unnecessary re-renders
   - Only re-renders when active notifications actually change (performance optimization)
@@ -136,6 +141,7 @@ The plugin is organized into 11 focused modules, grouped by architectural concer
 
 - **`settings.ts`** - Plugin settings:
   - `lookbackDays` - How many days in the past to check for events (default: 3)
+  - `useFileDate` - Extract date from filename for context-aware notifications (default: true)
   - `debugLogging` - Enable verbose console logging (default: false)
   - `acknowledgements` - Map of acknowledged notifications with dates
   - Settings UI using Obsidian's `PluginSettingTab`
@@ -159,6 +165,8 @@ The plugin is organized into 11 focused modules, grouped by architectural concer
 8. **Block ID manager batching**: Queues tasks during initial vault scan and groups by file to minimize `vault.process()` calls. Verifies line content hasn't changed before modification for safety.
 
 9. **Smart refresh with hash-based change detection**: Renderer creates a hash of current active notifications and only re-renders when the hash changes. Prevents flickering and unnecessary DOM manipulation.
+
+10. **Context-aware date extraction**: Renderer can extract dates from filenames (e.g., `2026-01-07.md`) to show notifications relevant to that date instead of always using today's date. Enabled by default with user toggle in settings. Falls back gracefully to system date when no file date is found.
 
 ## Styling System
 
