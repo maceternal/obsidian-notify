@@ -25,19 +25,23 @@ Create tasks with emoji markers to define notifications:
 ### Example Tasks
 
 **One-time event:**
+
 ```markdown
 - [ ] Created Notify Plugin 📆 2025-12-23 🔔 ^abc123
 ```
 
 **Yearly recurring event:**
+
 ```markdown
 - [ ] Project Launch Anniversary 📆 2024-03-15 🔁 year 🔔 ^def456
 ```
 
 **Event with multiple reminders:**
+
 ```markdown
 - [ ] Annual Review 📆 2025-06-01 🔁 year 4️⃣ week 2️⃣ week 🔔 ^ghi789
 ```
+
 This creates reminders 4 weeks and 2 weeks before June 1st, repeating yearly.
 
 ### Displaying Notifications
@@ -46,10 +50,12 @@ Add a `notify` code block to any note (typically your daily note):
 
 ````markdown
 ```notify
+
 ```
 ````
 
 This will display:
+
 - Events happening today (or within the lookback window for past events)
 - Reminder notifications for upcoming events
 - Checkboxes to acknowledge each notification
@@ -67,12 +73,14 @@ Tasks need block IDs (the `^abc123` part) to create clickable links. If you don'
 ## Settings
 
 **Lookback Days** (default: 3)
+
 - How many days in the past to check for events
 - Useful for catching events that happened over the weekend
 
 ## Commands
 
 **Show all notification tasks**
+
 - Opens a debug modal showing all notification tasks across your vault
 - Displays event dates, repeat intervals, and reminder offsets
 - Click any task to navigate to its source location
@@ -89,22 +97,26 @@ Tasks need block IDs (the `^abc123` part) to create clickable links. If you don'
 ## Development
 
 ### Setup
+
 ```bash
 npm install
 ```
 
 ### Build
+
 ```bash
 npm run dev    # Watch mode - rebuilds on file changes
 npm run build  # Production build
 ```
 
 ### Lint
+
 ```bash
 npm run lint
 ```
 
 ### Version Bump
+
 ```bash
 npm version patch  # 0.1.0 -> 0.1.1
 npm version minor  # 0.1.0 -> 0.2.0

@@ -8,6 +8,9 @@ if [ "$branch" = "main" ]; then
   exit 1
 fi
 
+echo "✨ Formatting code..."
+npm run format || exit 1
+
 echo "🔍 Running linter..."
 npm run lint || exit 1
 

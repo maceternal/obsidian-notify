@@ -11,12 +11,14 @@ This is an Obsidian plugin for managing event notifications and reminders using 
 ### Emoji Syntax
 
 Tasks use emoji markers to define notifications:
+
 - `📆` - Date of event (format: YYYY-MM-DD)
 - `🔔` - Marks a task as a reminder/notification
 - `🔁` - Repeat interval (day, week, month, year)
 - `1️⃣`, `2️⃣`, `3️⃣`, etc. - Reminder offsets (e.g., "2️⃣ week" = remind 2 weeks before event)
 
 Example task:
+
 ```
 - [ ] Team Meeting 📆 2025-01-15 🔁 week 1️⃣ day 🔔 ^abc123
 ```
@@ -26,6 +28,7 @@ This creates a reminder 1 day before January 15th, repeating weekly. The `^abc12
 ### Code Block Display
 
 Notifications appear in ` ```notify``` ` code blocks with checkboxes and links back to source:
+
 ```
 - [ ] [[File#^blockid|Team Meeting]] 📆 *2025-01-15* — *1 day early*
 ```
@@ -232,6 +235,7 @@ main.ts (plugin entry)
 ```
 
 **Key dependency patterns:**
+
 - `types.ts` is imported by most modules (shared data structures)
 - `cache.ts` depends on `parser.ts` and `blockid-manager.ts` for processing
 - `renderer.ts` depends on `matcher.ts` for business logic separation
@@ -241,11 +245,13 @@ main.ts (plugin entry)
 ## Development Commands
 
 ### Initial Setup
+
 ```bash
 npm install
 ```
 
 ### Build and Development
+
 ```bash
 npm run dev    # Watch mode - rebuilds on file changes
 npm run build  # Production build (runs TypeScript type checking first)
@@ -254,6 +260,7 @@ npm run build  # Production build (runs TypeScript type checking first)
 The build uses esbuild for fast compilation. Output is `main.js` in the plugin root.
 
 ### Linting
+
 ```bash
 npm run lint   # Check for linting issues using eslint
 ```
@@ -261,6 +268,7 @@ npm run lint   # Check for linting issues using eslint
 ESLint is configured with `eslint-plugin-obsidianmd` for Obsidian-specific best practices.
 
 ### Version Bumping
+
 ```bash
 npm version patch  # Bump patch version (e.g., 0.1.0 -> 0.1.1)
 npm version minor  # Bump minor version (e.g., 0.1.0 -> 0.2.0)

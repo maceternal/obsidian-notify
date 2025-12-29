@@ -2,54 +2,56 @@ import tseslint from "typescript-eslint";
 import obsidianmd from "eslint-plugin-obsidianmd";
 import globals from "globals";
 import { globalIgnores } from "eslint/config";
+import prettierConfig from "eslint-config-prettier";
 
 export default tseslint.config(
-	{
-		languageOptions: {
-			globals: {
-				...globals.browser,
-			},
-			parserOptions: {
-				projectService: {
-					allowDefaultProject: ["eslint.config.js", "manifest.json"],
-				},
-				tsconfigRootDir: import.meta.dirname,
-				extraFileExtensions: [".json"],
-			},
-		},
-	},
-	...obsidianmd.configs.recommended,
-	{
-		rules: {
-			// Allow moment in devDependencies for testing
-			"depend/ban-dependencies": [
-				"error",
-				{
-					allowed: ["moment"],
-				},
-			],
-		},
-	},
-	{
-		files: ["vitest.config.ts"],
-		languageOptions: {
-			globals: {
-				...globals.node,
-			},
-		},
-		rules: {
-			"import/no-nodejs-modules": "off",
-		},
-	},
-	globalIgnores([
-		"node_modules",
-		"dist",
-		"esbuild.config.mjs",
-		"eslint.config.js",
-		"version-bump.mjs",
-		"versions.json",
-		"main.js",
-		"**/*.test.ts",
-		"src/__tests__/**",
-	]),
+  {
+    languageOptions: {
+      globals: {
+        ...globals.browser,
+      },
+      parserOptions: {
+        projectService: {
+          allowDefaultProject: ["eslint.config.js", "manifest.json"],
+        },
+        tsconfigRootDir: import.meta.dirname,
+        extraFileExtensions: [".json"],
+      },
+    },
+  },
+  ...obsidianmd.configs.recommended,
+  prettierConfig,
+  {
+    rules: {
+      // Allow moment in devDependencies for testing
+      "depend/ban-dependencies": [
+        "error",
+        {
+          allowed: ["moment"],
+        },
+      ],
+    },
+  },
+  {
+    files: ["vitest.config.ts"],
+    languageOptions: {
+      globals: {
+        ...globals.node,
+      },
+    },
+    rules: {
+      "import/no-nodejs-modules": "off",
+    },
+  },
+  globalIgnores([
+    "node_modules",
+    "dist",
+    "esbuild.config.mjs",
+    "eslint.config.js",
+    "version-bump.mjs",
+    "versions.json",
+    "main.js",
+    "**/*.test.ts",
+    "src/__tests__/**",
+  ]),
 );
