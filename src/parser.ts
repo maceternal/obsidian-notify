@@ -1,3 +1,4 @@
+import { moment } from "obsidian";
 import { ReminderOffset } from "./types";
 
 export class TaskParser {
@@ -97,5 +98,28 @@ export class TaskParser {
 	 */
 	static generateBlockId(): string {
 		return Math.random().toString(36).substring(2, 8);
+	}
+
+	/**
+	 * Extract date from filename
+	 * Supports common daily note formats:
+	 * - YYYY-MM-DD.md
+	 * - YYYY-MM-DD Note Title.md
+	 * - Notes/YYYY-MM-DD.md
+	 */
+	static extractDateFromFilename(filepath: string): string | null {
+		// Extract basename (filename without path)
+		const filename = filepath.split("/").pop() || "";
+
+		// Remove .md extension
+		const basename = filename.replace(/\.md$/, "");
+
+		// Pattern: YYYY-MM-DD at start of filename
+		const match = basename.match(/^(\d{4}-\d{2}-\d{2})/);
+		if (match?.[1] && moment(match[1], "YYYY-MM-DD", true).isValid()) {
+			return match[1];
+		}
+
+		return null;
 	}
 }

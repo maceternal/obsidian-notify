@@ -6,21 +6,30 @@ import {
 } from "obsidian";
 import NotificationPlugin from "./main";
 import { NotificationMatcher } from "./matcher";
+import { NotificationSettings } from "./settings";
+import { TaskParser } from "./parser";
+import { Logger } from "./logger";
 import { ActiveNotification } from "./types";
 
 export class NotifyBlockRenderer extends MarkdownRenderChild {
 	private plugin: NotificationPlugin;
+	private settings: NotificationSettings;
 	private sourcePath: string;
 	private lastRenderHash: string = "";
+	private logger: Logger;
 
 	constructor(
 		containerEl: HTMLElement,
 		ctx: MarkdownPostProcessorContext,
 		plugin: NotificationPlugin,
+		settings: NotificationSettings,
+		logger: Logger,
 	) {
 		super(containerEl);
 		this.plugin = plugin;
+		this.settings = settings;
 		this.sourcePath = ctx.sourcePath;
+		this.logger = logger;
 	}
 
 	onload() {
@@ -36,6 +45,30 @@ export class NotifyBlockRenderer extends MarkdownRenderChild {
 		this.plugin.unregisterRenderer(this);
 	}
 
+	/**
+	 * Get the reference date for this notify block
+	 * Tries: 1) File date extraction (if enabled), 2) Today's date
+	 */
+	private getReferenceDate(): string {
+		// If file date extraction is enabled, try to extract from filename
+		if (this.settings.useFileDate) {
+			const fileDate = TaskParser.extractDateFromFilename(
+				this.sourcePath,
+			);
+			if (fileDate) {
+				this.logger.debug(
+					`Using file date: ${fileDate} from ${this.sourcePath}`,
+				);
+				return fileDate;
+			}
+		}
+
+		// Fall back to today's date
+		const today = moment().format("YYYY-MM-DD");
+		this.logger.debug(`Using system date: ${today}`);
+		return today;
+	}
+
 	async refresh() {
 		// Don't refresh if cache isn't ready
 		if (!this.plugin.cache) {
@@ -44,11 +77,11 @@ export class NotifyBlockRenderer extends MarkdownRenderChild {
 
 		// Only re-render if the notifications actually changed
 		const allTasks = this.plugin.cache.getAllTasks();
-		const today = moment().format("YYYY-MM-DD");
-		const matcher = new NotificationMatcher(this.plugin.settings);
+		const referenceDate = this.getReferenceDate();
+		const matcher = new NotificationMatcher(this.settings);
 		const activeNotifications = matcher.getActiveNotifications(
 			allTasks,
-			today,
+			referenceDate,
 		);
 
 		// Create a hash of current notifications
@@ -93,14 +126,14 @@ export class NotifyBlockRenderer extends MarkdownRenderChild {
 		// Get all tasks from cache
 		const allTasks = this.plugin.cache.getAllTasks();
 
-		// Get today's date
-		const today = moment().format("YYYY-MM-DD");
+		// Get reference date (from file or system date)
+		const referenceDate = this.getReferenceDate();
 
 		// Use matcher to find active notifications
-		const matcher = new NotificationMatcher(this.plugin.settings);
+		const matcher = new NotificationMatcher(this.settings);
 		const activeNotifications = matcher.getActiveNotifications(
 			allTasks,
-			today,
+			referenceDate,
 		);
 
 		// Update hash
@@ -147,8 +180,8 @@ export class NotifyBlockRenderer extends MarkdownRenderChild {
 
 		// Get notification key and check if acknowledged
 		const key = this.getNotificationKey(notif);
-		const today = moment().format("YYYY-MM-DD");
-		const isAcknowledged = this.plugin.isAcknowledged(key, today);
+		const referenceDate = this.getReferenceDate();
+		const isAcknowledged = this.plugin.isAcknowledged(key, referenceDate);
 
 		// Set checkbox state
 		checkbox.checked = isAcknowledged;
@@ -162,7 +195,10 @@ export class NotifyBlockRenderer extends MarkdownRenderChild {
 		this.registerDomEvent(checkbox, "change", () => {
 			void (async () => {
 				if (checkbox.checked) {
-					await this.plugin.acknowledgeNotification(key);
+					await this.plugin.acknowledgeNotification(
+						key,
+						referenceDate,
+					);
 					li.addClass("acknowledged");
 				} else {
 					await this.plugin.unacknowledgeNotification(key);

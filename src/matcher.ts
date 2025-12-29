@@ -1,9 +1,5 @@
 import { moment } from "obsidian";
-import {
-	NotificationTask,
-	ActiveNotification,
-	ReminderOffset,
-} from "./types";
+import { NotificationTask, ActiveNotification, ReminderOffset } from "./types";
 import { NotificationSettings } from "./settings";
 
 export class NotificationMatcher {
@@ -27,9 +23,7 @@ export class NotificationMatcher {
 			const eventDate = moment(task.eventDate);
 
 			// Check 1: Does the event date match (with repeat and lookback logic)?
-			if (
-				this.eventDateMatches(eventDate, today, task.repeatInterval)
-			) {
+			if (this.eventDateMatches(eventDate, today, task.repeatInterval)) {
 				const daysDiff = today.diff(eventDate, "days");
 				const context = this.getEventDateContext(
 					daysDiff,
@@ -53,10 +47,12 @@ export class NotificationMatcher {
 				);
 
 				if (reminderDate && reminderDate.isSame(today, "day")) {
+					const unit =
+						offset.number === 1 ? offset.unit : `${offset.unit}s`;
 					active.push({
 						task,
 						reminderOffset: offset,
-						displayText: `${task.title} 📆 ${task.eventDate} — *${offset.number} ${offset.unit} early*`,
+						displayText: `${task.title} 📆 ${task.eventDate} — *${offset.number} ${unit} early*`,
 					});
 				}
 			}
@@ -77,9 +73,7 @@ export class NotificationMatcher {
 			case null: {
 				// One-time event: exact match with lookback window
 				const daysDiff = today.diff(eventDate, "days");
-				return (
-					daysDiff >= 0 && daysDiff <= this.settings.lookbackDays
-				);
+				return daysDiff >= 0 && daysDiff <= this.settings.lookbackDays;
 			}
 
 			case "year": {
@@ -88,10 +82,7 @@ export class NotificationMatcher {
 				const yearDiff = today.diff(thisYearEvent, "days");
 
 				// Within lookback window for this year's occurrence
-				if (
-					yearDiff >= 0 &&
-					yearDiff <= this.settings.lookbackDays
-				) {
+				if (yearDiff >= 0 && yearDiff <= this.settings.lookbackDays) {
 					return true;
 				}
 
