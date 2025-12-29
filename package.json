@@ -12,7 +12,8 @@
 		"test": "vitest",
 		"test:watch": "vitest --watch",
 		"test:ui": "vitest --ui",
-		"test:coverage": "vitest --coverage"
+		"test:coverage": "vitest --coverage",
+		"prepare": "husky"
 	},
 	"keywords": [],
 	"license": "0-BSD",
@@ -24,6 +25,7 @@
 		"esbuild": "0.25.5",
 		"eslint-plugin-obsidianmd": "0.1.9",
 		"globals": "14.0.0",
+		"husky": "^9.1.7",
 		"jiti": "2.6.1",
 		"moment": "^2.30.1",
 		"tslib": "2.4.0",

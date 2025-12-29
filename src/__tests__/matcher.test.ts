@@ -412,7 +412,7 @@ describe("NotificationMatcher.getActiveNotifications", () => {
 
 		it("handles tasks with no block ID", () => {
 			const tasks = [
-				createTask({ blockId: null, eventDate: "2025-01-15" }),
+				createTask({ blockId: "", eventDate: "2025-01-15" }),
 			];
 
 			const matcher = new NotificationMatcher(DEFAULT_SETTINGS);
