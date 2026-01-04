@@ -7,6 +7,7 @@ export interface NotificationSettings {
   acknowledgements: NotificationAcknowledgements;
   debugLogging: boolean;
   useFileDate: boolean;
+  excludedFolders: string[];
 }
 
 export const DEFAULT_SETTINGS: NotificationSettings = {
@@ -14,6 +15,7 @@ export const DEFAULT_SETTINGS: NotificationSettings = {
   acknowledgements: {},
   debugLogging: false,
   useFileDate: true,
+  excludedFolders: ["Templates"],
 };
 
 export class NotificationSettingTab extends PluginSettingTab {
@@ -77,6 +79,28 @@ export class NotificationSettingTab extends PluginSettingTab {
             this.plugin.settings.debugLogging = value;
             this.plugin.logger.setDebugEnabled(value);
             await this.plugin.saveSettings();
+          }),
+      );
+
+    new Setting(containerEl)
+      .setName("Excluded folders")
+      .setDesc(
+        "Folders to exclude from notification scanning (one per line). " +
+          "Subfolders are automatically excluded",
+      )
+      .addTextArea((text) =>
+        text
+          .setPlaceholder("Templates\narchive\n.trash")
+          .setValue(this.plugin.settings.excludedFolders.join("\n"))
+          .onChange(async (value) => {
+            const folders = value
+              .split("\n")
+              .map((f) => f.trim())
+              .filter((f) => f.length > 0);
+
+            this.plugin.settings.excludedFolders = folders;
+            await this.plugin.saveSettings();
+            await this.plugin.reinitializeCache();
           }),
       );
   }

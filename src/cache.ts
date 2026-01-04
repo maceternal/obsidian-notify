@@ -4,6 +4,8 @@ import { TaskParser } from "./parser";
 import { BlockIdManager } from "./blockid-manager";
 import type NotificationPlugin from "./main";
 import { Logger } from "./logger";
+import { NotificationSettings } from "./settings";
+import { shouldExcludeFile as shouldExcludeFilePath } from "./path-utils";
 
 export class NotificationCache {
   private app: App;
@@ -11,18 +13,28 @@ export class NotificationCache {
   private blockIdManager: BlockIdManager;
   private plugin: NotificationPlugin;
   private logger: Logger;
+  private settings: NotificationSettings;
 
   constructor(
     app: App,
     blockIdManager: BlockIdManager,
     plugin: NotificationPlugin,
     logger: Logger,
+    settings: NotificationSettings,
   ) {
     this.app = app;
     this.cache = new Map();
     this.blockIdManager = blockIdManager;
     this.plugin = plugin;
     this.logger = logger;
+    this.settings = settings;
+  }
+
+  /**
+   * Check if a file should be excluded based on folder exclusion settings
+   */
+  private shouldExcludeFile(filePath: string): boolean {
+    return shouldExcludeFilePath(filePath, this.settings.excludedFolders);
   }
 
   /**
@@ -31,9 +43,23 @@ export class NotificationCache {
   async initialize(): Promise<void> {
     this.logger.debug("Initializing notification cache...");
     const files = this.app.vault.getMarkdownFiles();
+    let excludedCount = 0;
 
     for (const file of files) {
+      // Skip excluded files
+      if (this.shouldExcludeFile(file.path)) {
+        excludedCount++;
+        continue;
+      }
+
       await this.updateFile(file);
+    }
+
+    // Log summary
+    if (excludedCount > 0 && this.settings.excludedFolders.length > 0) {
+      this.logger.debug(
+        `Skipped ${excludedCount} file${excludedCount === 1 ? "" : "s"} in excluded folders (${this.settings.excludedFolders.join(", ")})`,
+      );
     }
 
     this.logger.debug(
@@ -48,6 +74,14 @@ export class NotificationCache {
    * Update cache for a specific file
    */
   async updateFile(file: TFile): Promise<void> {
+    // Check if file should be excluded
+    if (this.shouldExcludeFile(file.path)) {
+      this.logger.debug(`File is excluded, removing from cache: ${file.path}`);
+      this.cache.delete(file.path);
+      this.plugin.refreshAllNotifications();
+      return;
+    }
+
     // Get parsed metadata from Obsidian's cache
     const fileCache = this.app.metadataCache.getFileCache(file);
     const listItems = fileCache?.listItems || [];

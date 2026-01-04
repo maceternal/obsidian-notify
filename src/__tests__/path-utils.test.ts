@@ -7,16 +7,24 @@ describe("shouldExcludeFile", () => {
   });
 
   it("excludes files in nested folders", () => {
-    expect(shouldExcludeFile("Templates/subfolder/note.md", ["Templates"])).toBe(true);
+    expect(
+      shouldExcludeFile("Templates/subfolder/note.md", ["Templates"]),
+    ).toBe(true);
   });
 
   it("does not exclude files in similar folder names", () => {
-    expect(shouldExcludeFile("My Templates/note.md", ["Templates"])).toBe(false);
+    expect(shouldExcludeFile("My Templates/note.md", ["Templates"])).toBe(
+      false,
+    );
   });
 
   it("handles multiple exclusions", () => {
-    expect(shouldExcludeFile("Archive/old.md", ["Templates", "Archive"])).toBe(true);
-    expect(shouldExcludeFile("Templates/note.md", ["Templates", "Archive"])).toBe(true);
+    expect(shouldExcludeFile("Archive/old.md", ["Templates", "Archive"])).toBe(
+      true,
+    );
+    expect(
+      shouldExcludeFile("Templates/note.md", ["Templates", "Archive"]),
+    ).toBe(true);
   });
 
   it("allows all files when exclusion list is empty", () => {
@@ -32,6 +40,8 @@ describe("shouldExcludeFile", () => {
   });
 
   it("does not match partial folder names", () => {
-    expect(shouldExcludeFile("TemplatesNew/note.md", ["Templates"])).toBe(false);
+    expect(shouldExcludeFile("TemplatesNew/note.md", ["Templates"])).toBe(
+      false,
+    );
   });
 });
