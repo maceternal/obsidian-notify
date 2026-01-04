@@ -75,12 +75,32 @@ export default class NotificationPlugin extends Plugin {
       this.blockIdManager,
       this,
       this.logger,
+      this.settings,
     );
     await this.cache.initialize();
 
     // Start event listeners
     this.eventManager = new EventManager(this.app, this.cache, this.logger);
     this.eventManager.register();
+  }
+
+  async reinitializeCache(): Promise<void> {
+    this.logger.debug("Reinitializing notification cache...");
+
+    if (!this.cache) return;
+
+    this.cache = new NotificationCache(
+      this.app,
+      this.blockIdManager,
+      this,
+      this.logger,
+      this.settings,
+    );
+
+    await this.cache.initialize();
+    this.refreshAllNotifications();
+
+    this.logger.debug("Cache reinitialized");
   }
 
   onunload() {
